@@ -1,2 +1,2 @@
-worker: REPP_ENV=production bundle exec bin/rutan_bot
+worker: bundle exec ruby bin/rutan_bot
 
