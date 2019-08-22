@@ -1,0 +1,19 @@
+ping:
+  pong:
+    - pong
+    - は？
+event:
+  bot_added:
+    - <%= bot.name %> `(<%= bot.id %>)` の誕生を検知した件
+  bot_changed:
+    - <%= bot.name %> `(<%= bot.id %>)` の変身を検知した件
+  channel_archive:
+    - '`#<%= channel.name %>` ( <#<%= channel.id %>> ) が生涯の幕を閉じた'
+  channel_created:
+    - '`#<%= channel.name %>` ( <#<%= channel.id %>> ) の息吹を感じる'
+  channel_deleted:
+    - '`#<%= channel.name %>` なんて "無かった"'
+  channel_rename:
+    - '`#<%= old_name %>` だと思ったら `#<%= channel.name %>` ( <#<%= channel.id %>> ) だった'
+  channel_unarchive:
+    - '`#<%= channel.name %>` ( <#<%= channel.id %>> ) は不死鳥のように蘇るのだ！'
