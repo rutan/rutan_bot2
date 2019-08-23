@@ -4,9 +4,9 @@ ping:
     - は？
 event:
   bot_added:
-    - <%= bot.name %> `(<%= bot.id %>)` の誕生を検知した件
+    - '<%= bot.name %> ( <https://app.slack.com/services/<%= bot.id %>|<%= bot.id %>> ) の誕生を検知した件'
   bot_changed:
-    - <%= bot.name %> `(<%= bot.id %>)` の変身を検知した件
+    - '<%= bot.name %> ( <https://app.slack.com/services/<%= bot.id %>|<%= bot.id %>> ) が変身した件'
   channel_archive:
     - '`#<%= channel.name %>` ( <#<%= channel.id %>> ) が生涯の幕を閉じた'
   channel_created:
