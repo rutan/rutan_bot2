@@ -17,3 +17,14 @@ event:
     - '`#<%= old_name %>` だと思ったら `#<%= channel.name %>` ( <#<%= channel.id %>> ) だった'
   channel_unarchive:
     - '`#<%= channel.name %>` ( <#<%= channel.id %>> ) は不死鳥のように蘇るのだ！'
+  emoji_changed:
+    add:
+      - "新種の :<%= emoji.name %>: を発見！\n<%= emoji.value %>"
+    remove:
+      - '<%= emoji.names.map { |name| ":#{name}:" }.join(" ") %> という絵文字は過去のものになった'
+  subteam_created:
+    - '新たな軍勢 `<%= subteam.handle %>` が爆誕したよ'
+  subteam_updated:
+    - '軍勢 `<%= subteam.handle %>` が進化した件'
+  team_join:
+    - '<@<%= user.id %>> 参戦！'

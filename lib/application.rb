@@ -62,4 +62,30 @@ class RutanBot < Mobb::Base
     render 'event.channel_unarchive',
            locals: {channel: channel}
   end
+
+  on 'emoji_changed', on_event: true, to_notify: true do
+    case @env.raw.subtype
+    when 'add'
+      render 'event.emoji_changed.add',
+             locals: {emoji: @env.raw}
+    when 'remove'
+      render 'event.emoji_changed.remove',
+             locals: {emoji: @env.raw}
+    end
+  end
+
+  on 'subteam_created', on_event: true, to_notify: true do
+    render 'event.subteam_created',
+            locals: {subteam: @env.subteam}
+  end
+
+  on 'subteam_updated', on_event: true, to_notify: true do
+    render 'event.subteam_updated',
+            locals: {subteam: @env.subteam}
+  end
+
+  on 'team_join', on_event: true, to_notify: true do
+    render 'event.team_join',
+            locals: {user: @env.user}
+  end
 end

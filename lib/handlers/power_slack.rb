@@ -168,6 +168,8 @@ module Handlers
     end
 
     def on_message(message)
+      return unless message.user
+
       from_user = slack_service.find_user(message.user)
       channel = slack_service.find_channel(message.channel)
       reply_to = (message.text || '').scan(/<@(\w+?)>/).map do |node|
