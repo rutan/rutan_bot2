@@ -28,6 +28,10 @@ class RutanBot < Mobb::Base
     render 'ping.pong'
   end
 
+  on /echo\s+(.+)/, reply_to_me: true do |match|
+    match
+  end
+
   on 'bot_added', on_event: true, to_notify: true do
     render 'event.bot_added', locals: {bot: @env.raw.bot}
   end
