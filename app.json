@@ -1,0 +1,9 @@
+{
+    "name": "rutan_bot",
+    "scripts": {
+        "postdeploy": "bundle exec rake db:migrate",
+        "dokku": {
+            "predeploy": "bundle exec rake db:migrate"
+        }
+    }
+}
