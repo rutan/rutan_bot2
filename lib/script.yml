@@ -19,7 +19,7 @@ event:
     - '`#<%= channel.name %>` ( <#<%= channel.id %>> ) は不死鳥のように蘇るのだ！'
   emoji_changed:
     add:
-      - "新種の :<%= emoji.name %>: を発見！\n<%= emoji.value %>"
+      - "新種の :<%= emoji.name %>: `:<%= emoji.name %>:` を発見！\n<%= emoji.value %>"
     remove:
       - '<%= emoji.names.map { |name| ":#{name}:" }.join(" ") %> という絵文字は過去のものになった'
   subteam_created:

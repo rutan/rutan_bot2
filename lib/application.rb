@@ -80,16 +80,16 @@ class RutanBot < Mobb::Base
 
   on 'subteam_created', on_event: true, to_notify: true do
     render 'event.subteam_created',
-            locals: {subteam: @env.subteam}
+            locals: {subteam: @env.raw.subteam}
   end
 
   on 'subteam_updated', on_event: true, to_notify: true do
     render 'event.subteam_updated',
-            locals: {subteam: @env.subteam}
+            locals: {subteam: @env.raw.subteam}
   end
 
   on 'team_join', on_event: true, to_notify: true do
     render 'event.team_join',
-            locals: {user: @env.user}
+            locals: {user: @env.raw.user}
   end
 end
