@@ -199,8 +199,11 @@ module Handlers
       )
       process_receive(receive)
 
-      if message.type == 'channel_rename'
+      case message.type
+      when 'channel_rename'
         slack_service.refresh_channel_caches
+      when 'user_change'
+        slack_service.refresh_users_cache
       end
     end
 

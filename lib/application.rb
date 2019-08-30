@@ -92,4 +92,17 @@ class RutanBot < Mobb::Base
     render 'event.team_join',
             locals: {user: @env.raw.user}
   end
+
+  on 'user_change', on_event: true, to_notify: true do
+    old_user = @env.slack_service.find_user(@env.raw.user.id)
+    if @env.raw.user.deleted != old_user.deleted
+      if @env.raw.user.deleted
+        render 'event.user_change.deleted',
+                locals: {user: @env.raw.user}
+      else
+        render 'event.user_change.activate',
+                locals: {user: @env.raw.user}
+      end
+    end
+  end
 end
