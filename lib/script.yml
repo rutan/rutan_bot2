@@ -2,6 +2,17 @@ ping:
   pong:
     - pong
     - は？
+ganbare:
+  add:
+    success:
+      - ":<%= cheering.emoji %>: < OK"
+    error:
+      - ":<%= cheering.emoji %>: なんか登録できんかったわ"
+  remove:
+    success:
+      - ":<%= cheering.emoji %>: < わかった"
+    error:
+      - "いないよ"
 event:
   bot_added:
     - '<%= bot.name %> ( <https://app.slack.com/services/<%= bot.id %>|<%= bot.id %>> ) の誕生を検知した件'

@@ -78,6 +78,16 @@ module Handlers
       @channel_caches[uid] = nil
     end
 
+    def post(text:, channel:, attachments: [], as_user: true, name: nil, emoji: nil)
+      web_client.chat_postMessage({
+        text: text,
+        channel: channel,
+        as_user: as_user,
+        username: name,
+        icon_emoji: ":#{emoji}:",
+        attachments: attachments
+      }.delete_if {|_, v| v.nil?})
+    end
   end
 
   class PowerSlack

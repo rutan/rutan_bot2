@@ -18,6 +18,15 @@ class RutanBot < Mobb::Base
     condition {@env.kind_of?(::Handlers::PowerSlackEventReceive)}
   end
 
+  DEVASATION_CHANNELS = (ENV['DEVASATION_CHANNELS'] || '').split(/\s*,\s*/).uniq
+
+  set(:in_devastations) do |_|
+    condition do
+      channel = @env.try(:channel)
+      channel && DEVASATION_CHANNELS.include?(channel.id)
+    end
+  end
+
   set(:to_notify) do |_|
     dest_condition do |res|
       res.last[:channel] = ENV['NOTIFY_CHANNEL']
@@ -26,6 +35,42 @@ class RutanBot < Mobb::Base
 
   on /ping/, reply_to_me: true do
     render 'ping.pong'
+  end
+
+  on /\s*ganbare\s+add\s+:([^\:]+):(?:\s+([^\s]+)\s+(.+)$)?/, reply_to_me: true do |emoji, name, text|
+    cheering = ::Models::Cheering.new(
+      emoji: emoji.to_s,
+      name: name.to_s,
+      text: text.to_s
+    )
+    if cheering.save
+      render 'ganbare.add.success', locals: {cheering: cheering}
+    else
+      render 'ganbare.add.error', locals: {cheering: cheering}
+    end
+  end
+
+  on /\s*ganbare\s+remove\s+:([^\:]+):/, reply_to_me: true do |emoji|
+    cheering = ::Models::Cheering.find_by(emoji: emoji)
+    if cheering
+      cheering.destroy
+      render 'ganbare.remove.success', locals: {cheering: cheering}
+    else
+      render 'ganbare.remove.error'
+    end
+  end
+
+  on /(つら|ツラ|辛)(い|イ|たん)/, in_devastations: true do
+    cheering = ::Models::Cheering.pick_random
+    if cheering
+      @env.slack_service.post(
+        channel: @env.channel.id,
+        emoji: cheering.emoji,
+        name: cheering.name.empty? ? 'ganbare_bot' : cheering.name,
+        text: cheering.text.empty? ? '甘えんなカス' : cheering.text,
+        as_user: false
+      )
+    end
   end
 
   on /echo\s+(.+)/, reply_to_me: true do |match|
