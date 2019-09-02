@@ -39,7 +39,7 @@ event:
     - '軍勢 `<%= subteam.handle %>` が進化した件'
   team_join:
     - '<@<%= user.id %>> 参戦！'
-  user_changed:
+  user_change:
     activate:
       - "目覚めよ、<@<%= user.id %>>！"
     deleted:
