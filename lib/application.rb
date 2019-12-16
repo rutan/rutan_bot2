@@ -3,12 +3,25 @@ require_relative './bootstrap.rb'
 
 class RutanBot < Mobb::Base
   register ::Extensions::TalkRendererExtension
+  register ::Extensions::MemoryCacheExtension
 
   # settings
   set :name, ENV['BOT_NAME'] || 'rutan_bot'
   set :service, 'power_slack'
 
   register_render_file File.expand_path('../script.yml', __FILE__)
+
+  helpers do
+    def do_search_and_post(search_word)
+      search_word.search!.each do |result|
+        @env.slack_service.post(
+          channel: search_word.channel_id,
+          text: result.url
+        )
+        sleep 0.2
+      end
+    end
+  end
 
   set(:on_message) do |_|
     condition {@env.kind_of?(::Handlers::PowerSlackMessageReceive)}
@@ -70,6 +83,23 @@ class RutanBot < Mobb::Base
         text: cheering.text.empty? ? '甘えんなカス' : cheering.text,
         as_user: false
       )
+    end
+  end
+
+  on /エゴサ設定\s(.+)/, reply_to_me: true do |keyword|
+    next unless ::Models::SearchWords.usable_twitter?
+
+    unless @env.user.id == ENV['OWNER_USER_ID']
+      return render 'ego_search.forbidden'
+    end
+
+    search_word = ::Models::SearchWords.find_or_initialize_by(channel_id: @env.channel.id)
+    search_word.keyword = keyword
+    if search_word.save
+      search_word.update_since_id!
+      render 'ego_search.success', locals: { keyword: keyword.strip }
+    else
+      render 'ego_search.error'
     end
   end
 
@@ -149,5 +179,22 @@ class RutanBot < Mobb::Base
                 locals: {user: @env.raw.user}
       end
     end
+  end
+
+  cron '* * * * *' do
+    next unless ::Models::SearchWords.usable_twitter?
+
+    size = ::Models::SearchWords.count
+    next if size == 0
+
+    index = memory_cache[:search_index] || 0
+    index = (index + 1) % size
+    memory_cache[:search_index] = index
+
+    search_word = ::Models::SearchWords.order(id: :asc).offset(index).first
+    do_search_and_post(search_word)
+    nil
+  rescue => e
+    puts e.inspect
   end
 end

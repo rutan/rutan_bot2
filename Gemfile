@@ -13,6 +13,7 @@ gem 'repp'
 gem 'activerecord'
 
 gem 'slack-ruby-client'
+gem 'twitter'
 
 group :production do
   gem 'pg'

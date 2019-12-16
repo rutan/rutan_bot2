@@ -26,6 +26,25 @@ module Handlers
     end
   end
 
+  class PowerSlackTickerEvent < ::Repp::Event::Ticker
+    interface :slack_service
+  end
+
+  class PowerSlackTicker < ::Repp::Ticker
+    attr_accessor :slack_service
+
+    def run!
+      @task = Concurrent::TimerTask.new(execution_interval: 1) do
+        next unless slack_service
+        @block.call(Task.new.tick(PowerSlackTickerEvent.new(
+          body: Time.now,
+          slack_service: slack_service
+        )))
+      end
+      @task.execute
+    end
+  end
+
   class SlackService
     attr_reader :web_client
 
@@ -129,9 +148,11 @@ module Handlers
     end
 
     def init_ticker
-      @ticker = Repp::Ticker.task(@application) do |res|
-        puts 'ここでTickerの処理'
+      @ticker = PowerSlackTicker.task(@application) do |res|
+        post_message(res)
       end
+      @ticker.slack_service = slack_service
+      @ticker.run!
     end
 
     def connect!
@@ -219,17 +240,21 @@ module Handlers
 
     def process_receive(receive)
       res = @application.call(receive)
-      if res.first
-        channel_to_post = res.last && res.last[:channel] || receive.channel.id
-        attachments = res.last && res.last[:attachments]
+      post_message(res, receive)
+    end
 
-        web_client.chat_postMessage(
-          text: res.first,
-          channel: channel_to_post,
-          as_user: true,
-          attachments: attachments
-        )
-      end
+    def post_message(res, receive = nil)
+      return unless res.first
+      channel_to_post = res.last && res.last[:channel] || receive&.channel&.id
+      return unless channel_to_post
+      attachments = res.last && res.last[:attachments]
+
+      web_client.chat_postMessage(
+        text: res.first,
+        channel: channel_to_post,
+        as_user: true,
+        attachments: attachments
+      )
     end
 
     def format_text(src_text)

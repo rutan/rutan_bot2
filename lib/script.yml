@@ -13,6 +13,13 @@ ganbare:
       - ":<%= cheering.emoji %>: < わかった"
     error:
       - "いないよ"
+ego_search:
+  success:
+    - "これで監視してみた\n```\n<%= keyword %>\n```"
+  error:
+    - 'なんかだめだった'
+  forbidden:
+    - 'オーナーの言うことしか聞けないんだよね'
 event:
   bot_added:
     - '<%= bot.name %> ( <https://app.slack.com/services/<%= bot.id %>|<%= bot.id %>> ) の誕生を検知した件'
