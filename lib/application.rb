@@ -50,6 +50,18 @@ class RutanBot < Mobb::Base
     render 'ping.pong'
   end
 
+  on '日経平均' do
+    "https://chart.yahoo.co.jp/?code=998407.O&tm=1d&_ts=#{Time.now.to_i}"
+  end
+
+  on '9468' do
+    "https://chart.yahoo.co.jp/?code=9468.T&tm=1d&_ts=#{Time.now.to_i}"
+  end
+
+  on /\Achart\s*(\d+)\z/ do |code|
+    "https://chart.yahoo.co.jp/?code=#{code}.T&tm=1d&_ts=#{Time.now.to_i}"
+  end
+
   on /\s*ganbare\s+add\s+:([^\:]+):(?:\s+([^\s]+)\s+(.+)$)?/, reply_to_me: true do |emoji, name, text|
     cheering = ::Models::Cheering.new(
       emoji: emoji.to_s,
