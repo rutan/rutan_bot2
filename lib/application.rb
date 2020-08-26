@@ -115,6 +115,32 @@ class RutanBot < Mobb::Base
     end
   end
 
+  on /YouTube監視\s+([^\s]+)/, reply_to_me: true do |youtube_channel_id|
+    yt = ::Models::YoutubeChannel.new(
+      youtube_channel_id: youtube_channel_id,
+      post_channel_id: @env.channel.id
+    )
+    begin
+      current, _ = yt.refresh_statistics
+      return render 'youtube.success', locals: { statistics: current }
+    rescue => e
+      puts e.inspect
+      return render 'youtube.error'
+    end
+  end
+
+  on /YouTube/, reply_to_me: true do
+    ::Models::YoutubeChannel.where(post_channel_id: @env.channel.id).find_each do |yt|
+      current, prev = yt.refresh_statistics(skip_save: true)
+      result = render('youtube.notify', locals: { statistics: current, prev: prev })
+
+      @env.slack_service.post(
+        channel: yt.post_channel_id,
+        text: result.first
+      )
+    end
+  end
+
   on /echo\s+(.+)/, reply_to_me: true do |match|
     match
   end
@@ -191,6 +217,21 @@ class RutanBot < Mobb::Base
                 locals: {user: @env.raw.user}
       end
     end
+  end
+
+  cron '1 18 * * *' do
+    ::Models::YoutubeChannel.find_each do |yt|
+      current, prev = yt.refresh_statistics
+      result = render('youtube.notify', locals: { statistics: current, prev: prev })
+
+      @env.slack_service.post(
+        channel: yt.post_channel_id,
+        text: result.first
+      )
+    end
+    nil
+  rescue => e
+    puts e.inspect
   end
 
   cron '* * * * *' do

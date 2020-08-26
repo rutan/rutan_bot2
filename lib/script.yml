@@ -20,6 +20,13 @@ ego_search:
     - 'なんかだめだった'
   forbidden:
     - 'オーナーの言うことしか聞けないんだよね'
+youtube:
+  notify:
+    - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count] %>（前回：<%= prev[:subscriber_count] %>）\n　再生数：<%= statistics[:view_count] %>（前回：<%= prev[:view_count] %>）```"
+  success:
+    - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count] %>\n　再生数：<%= statistics[:view_count] %>```"
+  error:
+    - 'なんか死んだ'
 event:
   bot_added:
     - '<%= bot.name %> ( <https://app.slack.com/services/<%= bot.id %>|<%= bot.id %>> ) の誕生を検知した件'

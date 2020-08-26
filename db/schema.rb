@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2) do
+ActiveRecord::Schema.define(version: 3) do
 
   create_table "cheerings", force: :cascade do |t|
     t.string "emoji", null: false
@@ -28,6 +28,17 @@ ActiveRecord::Schema.define(version: 2) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["channel_id"], name: "index_search_words_on_channel_id", unique: true
+  end
+
+  create_table "youtube_channels", force: :cascade do |t|
+    t.string "title", limit: 255, null: false
+    t.string "youtube_channel_id", limit: 255, null: false
+    t.integer "subscriber_count", limit: 8, default: 0, null: false
+    t.integer "view_count", limit: 8, default: 0, null: false
+    t.string "post_channel_id", limit: 64, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["youtube_channel_id", "post_channel_id"], name: "index_youtube_channels_on_ycid_and_pcid", unique: true
   end
 
 end

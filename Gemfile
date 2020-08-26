@@ -12,6 +12,7 @@ gem 'repp'
 
 gem 'activerecord'
 
+gem 'rest-client'
 gem 'slack-ruby-client'
 gem 'twitter'
 
