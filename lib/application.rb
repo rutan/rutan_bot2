@@ -129,7 +129,7 @@ class RutanBot < Mobb::Base
     end
   end
 
-  on /YouTube/, reply_to_me: true do
+  on /(YouTube|youtube)/, reply_to_me: true do
     ::Models::YoutubeChannel.where(post_channel_id: @env.channel.id).find_each do |yt|
       current, prev = yt.refresh_statistics(skip_save: true)
       result = render('youtube.notify', locals: { statistics: current, prev: prev })
