@@ -50,7 +50,7 @@ event:
   subteam_created:
     - '新たな軍勢 `<%= subteam.handle %>` が爆誕したよ'
   subteam_updated:
-    - '軍勢 `<%= subteam.handle %>` が進化した件'
+    - '軍勢 `<%= subteam.handle %>` が変異した件'
   team_join:
     - '<@<%= user.id %>> 参戦！'
   user_change:
