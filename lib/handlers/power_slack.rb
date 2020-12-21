@@ -68,11 +68,18 @@ module Handlers
       end
     end
 
-    def find_user(uid)
-      return @user_caches[uid] if @user_caches.key?(uid)
-
+    def refresh_user_cache(uid)
       resp = web_client.users_info(user: uid)
       @user_caches[uid] = resp.ok ? resp.user : nil
+    end
+
+    def find_user(uid)
+      return @user_caches[uid] if @user_caches.key?(uid)
+      refresh_user_cache(uid)
+    end
+
+    def find_user_by_cache(uid)
+      @user_caches[uid]
     end
 
     def refresh_channel_caches
@@ -234,7 +241,11 @@ module Handlers
       when 'channel_rename'
         slack_service.refresh_channel_caches
       when 'user_change'
-        slack_service.refresh_users_cache
+        if message&.user&.id
+          slack_service.refresh_user_cache(message.user.id)
+        else
+          slack_service.refresh_users_cache
+        end
       end
     end
 
@@ -244,6 +255,7 @@ module Handlers
     end
 
     def post_message(res, receive = nil)
+      return unless res
       return unless res.first
       channel_to_post = res.last && res.last[:channel] || receive&.channel&.id
       return unless channel_to_post

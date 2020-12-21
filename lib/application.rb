@@ -42,7 +42,7 @@ class RutanBot < Mobb::Base
 
   set(:to_notify) do |_|
     dest_condition do |res|
-      res.last[:channel] = ENV['NOTIFY_CHANNEL']
+      res.last[:channel] = ENV['NOTIFY_CHANNEL'] if res
     end
   end
 
@@ -207,8 +207,9 @@ class RutanBot < Mobb::Base
   end
 
   on 'user_change', on_event: true, to_notify: true do
-    old_user = @env.slack_service.find_user(@env.raw.user.id)
-    if @env.raw.user.deleted != old_user.deleted
+    old_user = @env.slack_service.find_user_by_cache(@env.raw.user.id)
+
+    if old_user && @env.raw.user.deleted != old_user.deleted
       if @env.raw.user.deleted
         render 'event.user_change.deleted',
                 locals: {user: @env.raw.user}
