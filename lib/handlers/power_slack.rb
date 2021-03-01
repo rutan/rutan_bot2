@@ -85,7 +85,7 @@ module Handlers
     def refresh_channel_caches
       @channel_caches = {}
 
-      resp = web_client.channels_list
+      resp = web_client.conversations_list
       return unless resp.ok
       resp.channels.each do |channel|
         @channel_caches[channel.id] = channel
