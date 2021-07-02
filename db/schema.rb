@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 3) do
+ActiveRecord::Schema.define(version: 4) do
 
   create_table "cheerings", force: :cascade do |t|
     t.string "emoji", null: false
@@ -28,6 +28,18 @@ ActiveRecord::Schema.define(version: 3) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["channel_id"], name: "index_search_words_on_channel_id", unique: true
+  end
+
+  create_table "twitter_profiles", force: :cascade do |t|
+    t.string "screen_name", limit: 255, null: false
+    t.integer "twitter_user_id", limit: 8, null: false
+    t.integer "followers_count", limit: 8, default: 0, null: false
+    t.integer "friends_count", limit: 8, default: 0, null: false
+    t.integer "statuses_count", limit: 8, default: 0, null: false
+    t.string "post_channel_id", limit: 64, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["twitter_user_id", "post_channel_id"], name: "index_twitter_profiles_on_tuid_and_pcid", unique: true
   end
 
   create_table "youtube_channels", force: :cascade do |t|

@@ -16,15 +16,24 @@ ganbare:
 ego_search:
   success:
     - "これで監視してみた\n```\n<%= keyword %>\n```"
+  destroy:
+    - 'やめた'
   error:
     - 'なんかだめだった'
   forbidden:
     - 'オーナーの言うことしか聞けないんだよね'
+twitter:
+  notify:
+    - "```@<%= statistics[:screen_name] %>\n　フォロワー：<%= statistics[:followers_count].to_s(:delimited) %>（前回：<%= prev[:followers_count].to_s(:delimited) %>）\n　ツイート数：<%= statistics[:statuses_count].to_s(:delimited) %>（前回：<%= prev[:statuses_count].to_s(:delimited) %>）```"
+  success:
+    - "```@<%= statistics[:screen_name] %>\n　フォロワー：<%= statistics[:followers_count].to_s(:delimited) %>\n　ツイート数：<%= statistics[:statuses_count].to_s(:delimited) %>```"
+  error:
+    - 'なんか死んだ'
 youtube:
   notify:
-    - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count] %>（前回：<%= prev[:subscriber_count] %>）\n　再生数：<%= statistics[:view_count] %>（前回：<%= prev[:view_count] %>）```"
+    - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count].to_s(:delimited) %>（前回：<%= prev[:subscriber_count].to_s(:delimited) %>）\n　再生数：<%= statistics[:view_count].to_s(:delimited) %>（前回：<%= prev[:view_count].to_s(:delimited) %>）```"
   success:
-    - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count] %>\n　再生数：<%= statistics[:view_count] %>```"
+    - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count].to_s(:delimited) %>\n　再生数：<%= statistics[:view_count].to_s(:delimited) %>```"
   error:
     - 'なんか死んだ'
 event:

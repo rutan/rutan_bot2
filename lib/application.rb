@@ -115,6 +115,45 @@ class RutanBot < Mobb::Base
     end
   end
 
+  on /エゴサOFF/, reply_to_me: true do
+    next unless ::Models::SearchWords.usable_twitter?
+
+    unless @env.user.id == ENV['OWNER_USER_ID']
+      return render 'ego_search.forbidden'
+    end
+
+    search_word = ::Models::SearchWords.find_or_initialize_by(channel_id: @env.channel.id)
+    search_word.destroy
+    render 'ego_search.destroy'
+  end
+
+  on /Twitter監視\s+([^\s]+)/, reply_to_me: true do |screen_name|
+    begin
+      twitter = ::Models::TwitterProfile.register(
+        screen_name: screen_name,
+        post_channel_id: @env.channel.id
+      )
+      current, _ = twitter.refresh_statistics
+      return render 'twitter.success', locals: { statistics: current }
+    rescue => e
+      puts e.inspect
+      puts e.backtrace
+      return render 'twitter.error'
+    end
+  end
+
+  on /(Twitter|twitter)/, reply_to_me: true do
+    ::Models::TwitterProfile.where(post_channel_id: @env.channel.id).find_each do |twitter|
+      current, prev = twitter.refresh_statistics(skip_save: true)
+      result = render('twitter.notify', locals: { statistics: current, prev: prev })
+
+      @env.slack_service.post(
+        channel: twitter.post_channel_id,
+        text: result.first
+      )
+    end
+  end
+
   on /YouTube監視\s+([^\s]+)/, reply_to_me: true do |youtube_channel_id|
     yt = ::Models::YoutubeChannel.new(
       youtube_channel_id: youtube_channel_id,
@@ -227,6 +266,21 @@ class RutanBot < Mobb::Base
 
       @env.slack_service.post(
         channel: yt.post_channel_id,
+        text: result.first
+      )
+    end
+    nil
+  rescue => e
+    puts e.inspect
+  end
+
+  cron '2 18 * * *' do
+    ::Models::TwitterProfile.find_each do |twitter|
+      current, prev = twitter.refresh_statistics
+      result = render('twitter.notify', locals: { statistics: current, prev: prev })
+
+      @env.slack_service.post(
+        channel: twitter.post_channel_id,
         text: result.first
       )
     end
