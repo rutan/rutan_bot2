@@ -166,9 +166,10 @@ module Handlers
       begin
         reset_client
         bind_events
-        @rtm_client.start!
+        rtm_client.start!
       rescue => e
         puts e.inspect
+        rtm_client.stop! rescue nil
         sleep 1
       end
     end
