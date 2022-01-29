@@ -55,9 +55,9 @@ module Models
           when :brow
             buffer.push(":alphabet-white-#{key.downcase}:")
           when :used
-            buffer.push("~#{key.downcase}~ ")
+            buffer.push("~#{key.downcase.tr('a-z', 'ａ-ｚ')}~ ")
           else
-            buffer.push("#{key.upcase} ")
+            buffer.push("#{key.upcase.tr('A-Z', 'Ａ-Ｚ')} ")
           end
         end
         buffer.push("\n")
