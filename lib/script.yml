@@ -40,6 +40,15 @@ youtube:
     - "```<%= statistics[:title] %>\n　チャンネル登録：<%= statistics[:subscriber_count].to_s(:delimited) %>\n　再生数：<%= statistics[:view_count].to_s(:delimited) %>```"
   error:
     - 'なんか死んだ'
+wordle:
+  correct:
+    - "*おめでとうございます！！*\n<%= wordle.print_history %>\n\n<%= wordle.print_keyboard %>"
+  message:
+    - "<%= wordle.print_history %>\n\n<%= wordle.print_keyboard %>"
+  help:
+    - '5文字の単語をゆってね'
+  none:
+    - 'その言葉はぼくの辞書にないです'
 event:
   bot_added:
     - '<%= bot.name %> ( <https://app.slack.com/services/<%= bot.id %>|<%= bot.id %>> ) の誕生を検知した件'

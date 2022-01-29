@@ -184,6 +184,36 @@ class RutanBot < Mobb::Base
     match
   end
 
+  on /wordle/, reply_to_me: true do
+    wordle = (memory_cache[:wordle] ||= ::Models::Wordle.new)
+
+    if wordle.answer_count > 0
+      render 'wordle.message', locals: { wordle: wordle }
+    else
+      render 'wordle.help'
+    end
+  end
+
+  on /(?:\A|\s)([A-Za-z]{5})\z/, reply_to_me: true do |word|
+    wordle = (memory_cache[:wordle] ||= ::Models::Wordle.new)
+
+    return render 'wordle.none' unless wordle.valid_word?(word)
+
+    result = wordle.answer(word)
+
+    if result == :correct
+      # 正解している場合はメモリキャッシュから出題情報を消す
+      memory_cache[:wordle] = nil if result == :correct
+
+      render 'wordle.correct', locals: { wordle: wordle }
+    else
+      render 'wordle.message', locals: { wordle: wordle }
+    end
+  rescue => e
+    puts e.inspect
+    puts e.backtrace
+  end
+
   on 'bot_added', on_event: true, to_notify: true do
     render 'event.bot_added', locals: {bot: @env.raw.bot}
   end
