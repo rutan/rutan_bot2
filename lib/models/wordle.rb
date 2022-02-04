@@ -105,7 +105,8 @@ module Models
             resp.body
                 .split(/\r?\n/)
                 .map { |str| str.strip.upcase }
-                .select { |str| str.size == 5 && str.match(/\A[A-Z]{5}\z/) }
+                .select { |str| str.match(/\A[A-Z]{5}\z/) }
+                .select { |str| str.split('').uniq.size == 5 }
                 .uniq
           end
       end
