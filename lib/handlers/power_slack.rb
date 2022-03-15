@@ -258,7 +258,7 @@ module Handlers
     def post_message(res, receive = nil)
       return unless res
       return unless res.first
-      channel_to_post = res.last && res.last[:channel] || receive&.channel&.id
+      channel_to_post = res.last && res.last[:channel] || receive.try(:channel)&.id
       return unless channel_to_post
       attachments = res.last && res.last[:attachments]
 

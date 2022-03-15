@@ -275,19 +275,20 @@ class RutanBot < Mobb::Base
             locals: {user: @env.raw.user}
   end
 
-  on 'user_change', on_event: true, to_notify: true do
-    old_user = @env.slack_service.find_user_by_cache(@env.raw.user.id)
+  # skip
+  # on 'user_change', on_event: true, to_notify: true do
+  #   old_user = @env.slack_service.find_user_by_cache(@env.raw.user.id)
 
-    if old_user && @env.raw.user.deleted != old_user.deleted
-      if @env.raw.user.deleted
-        render 'event.user_change.deleted',
-                locals: {user: @env.raw.user}
-      else
-        render 'event.user_change.activate',
-                locals: {user: @env.raw.user}
-      end
-    end
-  end
+  #   if old_user && @env.raw.user.deleted != old_user.deleted
+  #     if @env.raw.user.deleted
+  #       render 'event.user_change.deleted',
+  #               locals: {user: @env.raw.user}
+  #     else
+  #       render 'event.user_change.activate',
+  #               locals: {user: @env.raw.user}
+  #     end
+  #   end
+  # end
 
   cron '1 18 * * *' do
     ::Models::YoutubeChannel.find_each do |yt|
