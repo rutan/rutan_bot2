@@ -50,22 +50,20 @@ module Handlers
 
     def initialize(web_client)
       @web_client = web_client
-      refresh
+      clear_cache
     end
 
-    def refresh
-      refresh_users_cache
-      refresh_channel_caches
+    def clear_cache
+      clear_user_cache
+      clear_channel_cache
     end
 
-    def refresh_users_cache
+    def clear_user_cache
       @user_caches = {}
+    end
 
-      resp = web_client.users_list
-      return unless resp.ok
-      resp.members.each do |member|
-        @user_caches[member.id] = member
-      end
+    def clear_channel_cache
+      @channel_caches = {}
     end
 
     def refresh_user_cache(uid)
@@ -82,26 +80,18 @@ module Handlers
       @user_caches[uid]
     end
 
-    def refresh_channel_caches
-      @channel_caches = {}
-
-      resp = web_client.conversations_list
-      return unless resp.ok
-      resp.channels.each do |channel|
-        @channel_caches[channel.id] = channel
-      end
+    def refresh_channel_cache(uid)
+      resp = web_client.conversations_info(channel: uid)
+      @channel_caches[uid] = resp.ok ? resp.channel : nil
     end
 
     def find_channel(uid)
       return @channel_caches[uid] if @channel_caches.key?(uid)
+      refresh_channel_cache(uid)
+    end
 
-      resp = web_client.conversations_info(channel: uid)
-      return @channel_caches[uid] = resp.channel if resp.ok
-
-      resp = web_client.groups_info(channel: uid)
-      return @channel_caches[uid] = resp.group if resp.ok
-
-      @channel_caches[uid] = nil
+    def find_channel_by_cache(uid)
+      @channel_caches[uid] if @channel_caches.key?(uid)
     end
 
     def post(text:, channel:, attachments: [], as_user: true, name: nil, emoji: nil)
@@ -240,12 +230,16 @@ module Handlers
 
       case message.type
       when 'channel_rename'
-        slack_service.refresh_channel_caches
+        if message&.channel&.id
+          slack_service.refresh_channel_cache(message.channel.id)
+        else
+          slack_service.clear_channel_cache
+        end
       when 'user_change'
         if message&.user&.id
           slack_service.refresh_user_cache(message.user.id)
         else
-          slack_service.refresh_users_cache
+          slack_service.clear_user_cache
         end
       end
     end
