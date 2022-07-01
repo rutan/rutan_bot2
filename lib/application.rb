@@ -1,3 +1,4 @@
+require 'objspace'
 require 'mobb/base'
 require_relative './bootstrap.rb'
 
@@ -182,6 +183,10 @@ class RutanBot < Mobb::Base
 
   on /echo\s+(.+)/, reply_to_me: true do |match|
     match
+  end
+
+  on /stats/, reply_to_me: true do
+    "ObjectSpace.memsize_of_all -> #{ObjectSpace.memsize_of_all}"
   end
 
   on /wordle/, reply_to_me: true do

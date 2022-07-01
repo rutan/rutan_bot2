@@ -141,7 +141,9 @@ module Handlers
     end
 
     def rtm_client
-      @rtm_client ||= ::Slack::RealTime::Client.new
+      @rtm_client ||= ::Slack::RealTime::Client.new(
+        store_class: Slack::RealTime::Stores::Starter,
+      )
     end
 
     def init_ticker
